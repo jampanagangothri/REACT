@@ -1,0 +1,181 @@
+import React, { useState } from 'react';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Container,
+  TextField,
+  Card,
+  CardContent,
+  Grid,
+  makeStyles,
+} from '@mui/material';
+
+const useStyles = makeStyles((theme) => ({
+  container: {
+    marginTop: theme.spacing(4),
+  },
+  card: {
+    marginTop: theme.spacing(4),
+  },
+}));
+
+function App() {
+  const classes = useStyles();
+  const [formData, setFormData] = useState({
+    name: '',
+    dob: '',
+    email: '',
+    contact: '',
+    about: '',
+  });
+  const [submittedData, setSubmittedData] = useState(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Validate the form fields
+    if (
+      !formData.name ||
+      !formData.dob ||
+      !formData.email ||
+      !formData.contact ||
+      !formData.about
+    ) {
+      alert('All fields are mandatory.');
+      return;
+    }
+
+    const namePattern = /^[A-Za-z\s]+$/;
+    if (!namePattern.test(formData.name)) {
+      alert('Name should contain alphabets only.');
+      return;
+    }
+
+    const contactPattern = /^\d{10}$/;
+    if (!contactPattern.test(formData.contact)) {
+      alert('Contact should be 10 digits and contain only digits.');
+      return;
+    }
+
+    const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+    if (!emailPattern.test(formData.email)) {
+      alert('Invalid email format.');
+      return;
+    }
+
+    const currentDate = new Date();
+    const dobDate = new Date(formData.dob);
+    if (dobDate > currentDate) {
+      alert("Date of Birth can't be greater than today's date.");
+      return;
+    }
+
+    // If all validations pass, set the submitted data
+    setSubmittedData(formData);
+  };
+
+  return (
+    <div>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6">My Website</Typography>
+          <Button color="inherit">Home</Button>
+          <Button color="inherit">About Us</Button>
+          <Button color="inherit">Contact</Button>
+        </Toolbar>
+      </AppBar>
+      <Container className={classes.container}>
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Name"
+                variant="outlined"
+                fullWidth
+                required
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Date of Birth"
+                type="date"
+                variant="outlined"
+                fullWidth
+                required
+                InputLabelProps={{ shrink: true }}
+                value={formData.dob}
+                onChange={(e) =>
+                  setFormData({ ...formData, dob: e.target.value })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Email Id"
+                type="email"
+                variant="outlined"
+                fullWidth
+                required
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Contact Number"
+                variant="outlined"
+                fullWidth
+                required
+                value={formData.contact}
+                onChange={(e) =>
+                  setFormData({ ...formData, contact: e.target.value })
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Tell me about yourself"
+                multiline
+                rows={4}
+                variant="outlined"
+                fullWidth
+                required
+                value={formData.about}
+                onChange={(e) =>
+                  setFormData({ ...formData, about: e.target.value })
+                }
+              />
+            </Grid>
+          </Grid>
+          <Button type="submit" variant="contained" color="primary">
+            Submit
+          </Button>
+        </form>
+
+        {submittedData && (
+          <Card className={classes.card}>
+            <CardContent>
+              <Typography variant="h6">Submitted Data:</Typography>
+              <Typography>Name: {submittedData.name}</Typography>
+              <Typography>Date of Birth: {submittedData.dob}</Typography>
+              <Typography>Email Id: {submittedData.email}</Typography>
+              <Typography>Contact Number: {submittedData.contact}</Typography>
+              <Typography>Tell me about yourself: {submittedData.about}</Typography>
+            </CardContent>
+          </Card>
+        )}
+      </Container>
+    </div>
+  );
+}
+
+export default App;
+
